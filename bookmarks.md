@@ -13,6 +13,10 @@ title: My bookmarks
 
 - [Wiz Blog | Latest stories about Cloud Security](https://www.wiz.io/blog)
   tags: #cybersecurity
+- [LimberDuck](https://limberduck.org) — Tools designed to streamline and automate the work of cybersecurity professionals.
+  tags: #cybersecurity
+- [Cybersecurity Stream](https://cybersecuritystream.github.io) — Free cybersecurity training for students and graduates.
+  tags: #cybersecurity
 
 ## AI
 
