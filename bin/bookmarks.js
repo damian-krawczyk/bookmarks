@@ -142,7 +142,7 @@ function writeAtomic(file, text) {
 function importCmd(src, flags) {
   if (!src) { console.error(USAGE); return 2; }
   const into = flags.into || "bookmarks.md";
-  const existing = fs.existsSync(into) ? Model.parse(read(into)).model : Model.emptyModel("Bookmarks");
+  const existing = fs.existsSync(into) ? Model.parse(read(into)).model : Model.emptyModel("Bookmarks", [`created: ${Model.createdNow()}`]);
   const { model: imported, skipped } = Netscape.parse(read(src));
   const { added, duplicates } = Netscape.merge(existing, imported, Model.splitPath(flags.under));
   writeAtomic(into, Model.serialize(existing));
@@ -294,7 +294,7 @@ function main(argv) {
   const needFile = ["serve", "build", "validate", "export"].includes(cmd);
   if (needFile && !fs.existsSync(file)) {
     if (cmd === "serve") {
-      fs.writeFileSync(file, Model.serialize(Model.emptyModel("Bookmarks")));
+      fs.writeFileSync(file, Model.serialize(Model.emptyModel("Bookmarks", [`created: ${Model.createdNow()}`])));
       console.log(`created ${file}`);
     } else {
       console.error(`no such file: ${file}`);

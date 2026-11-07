@@ -1,4 +1,6 @@
-<!-- title: Example bookmarks -->
+---
+title: Example bookmarks
+---
 
 - [GitHub](https://github.com) — Where the code lives
   tags: #code #git

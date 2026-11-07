@@ -1,4 +1,6 @@
-<!-- title: My bookmarks -->
+---
+title: My bookmarks
+---
 
 # Getting started
 

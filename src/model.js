@@ -3,7 +3,10 @@
 // write the file the same way.
 //
 // Format:
-//   <!-- title: My bookmarks -->
+//   ---                                          ← optional YAML front matter:
+//   title: My bookmarks                          ←   title: is the page title,
+//   created: 2026-11-07T14:08:10+0100            ←   other fields are kept as written
+//   ---
 //   - [Loose link](https://example.com)          ← entries before any heading: root
 //   # Dev                                        ← heading level = folder depth
 //   ## JavaScript
@@ -16,7 +19,8 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
-  const TITLE_RE = /^<!--\s*title:\s*(.*?)\s*-->\s*$/i;
+  const TITLE_RE = /^<!--\s*title:\s*(.*?)\s*-->\s*$/i; // old format, still read
+  const FM_TITLE_RE = /^title:\s*(.*?)\s*$/;
   const HEADING_RE = /^(#{1,6})\s+(.+?)\s*#*\s*$/;
   // - [name](url) — description   (name may contain \] ; url may contain parentheses)
   const ENTRY_RE = /^[-*+]\s+\[((?:\\.|[^\]\\])*)\]\((\S*?)\)(?:\s+[—–-]{1,2}\s+(.*))?\s*$/;
@@ -30,8 +34,31 @@
     return { name, folders: [], entries: [], notes: [] };
   }
 
-  function emptyModel(title) {
-    return { title: title || "", root: newFolder("") };
+  // meta: the front matter's lines as written (between the --- lines), title: line included.
+  function emptyModel(title, meta) {
+    return { title: title || "", meta: meta ? meta.slice() : [], root: newFolder("") };
+  }
+
+  // A YAML scalar → string, for the title: line (plain, "double" or 'single' quoted).
+  function yamlValue(s) {
+    s = s.replace(/\s+#.*$/, "").trim();
+    if (s.startsWith('"')) { try { return JSON.parse(s); } catch (_) { return s.slice(1, -1); } }
+    if (s.startsWith("'")) return s.slice(1, -1).replace(/''/g, "'");
+    return s;
+  }
+
+  // A string → a YAML scalar that reads back the same.
+  function yamlString(s) {
+    s = String(s).replace(/[\r\n]+/g, " ").trim();
+    const plain = s && !/^[\s\-?:,\[\]{}#&*!|>'"%@`]|: | #|:$|^(true|false|yes|no|null|~|[-+.\d][\d._:eE+-]*)$/i.test(s);
+    return plain ? s : JSON.stringify(s);
+  }
+
+  // Split off the front matter: the block between a first line "---" and the next "---" or "...".
+  function frontMatter(lines) {
+    if ((lines[0] || "").replace(/^\uFEFF/, "").trim() !== "---") return null;
+    const end = lines.findIndex((l, i) => i > 0 && /^(---|\.\.\.)\s*$/.test(l));
+    return end > 0 ? { meta: lines.slice(1, end), end } : null;
   }
 
   // "#a, b  #c d" → ["a", "b", "c", "d"]; tags never contain spaces or commas.
@@ -62,9 +89,16 @@
     const lines = String(text || "").replace(/\r\n?/g, "\n").split("\n");
     let stack = [model.root]; // stack[d] = folder at depth d
     let last = null; // entry that indented lines continue
+    const fm = frontMatter(lines);
+    if (fm) {
+      model.meta = fm.meta;
+      const t = fm.meta.map((l) => FM_TITLE_RE.exec(l)).find(Boolean);
+      if (t) model.title = yamlValue(t[1]);
+    }
 
     lines.forEach((line, i) => {
       const n = i + 1;
+      if (fm && i <= fm.end) return;
       if (!line.trim()) return;
       let m;
       if (!model.title && (m = TITLE_RE.exec(line.trim()))) { model.title = m[1]; last = null; return; }
@@ -111,7 +145,18 @@
 
   function serialize(model) {
     const blocks = [];
-    if (model.title) blocks.push(`<!-- title: ${model.title} -->\n`);
+    const meta = (model.meta || []).slice();
+    const at = meta.findIndex((l) => FM_TITLE_RE.test(l));
+    if (model.title) {
+      // Keep the line as written unless the title changed.
+      const same = at >= 0 && yamlValue(FM_TITLE_RE.exec(meta[at])[1]) === model.title;
+      if (!same) {
+        const line = `title: ${yamlString(model.title)}`;
+        if (at >= 0) meta[at] = line;
+        else meta.unshift(line);
+      }
+    } else if (at >= 0) meta.splice(at, 1);
+    if (meta.length) blocks.push(`---\n${meta.join("\n")}\n---\n`);
     const body = (folder) => {
       let out = "";
       if (folder.notes.length) out += folder.notes.join("\n") + "\n";
@@ -130,6 +175,14 @@
     };
     walk(model.root, 1);
     return blocks.join("\n");
+  }
+
+  // "2026-11-07T14:08:10+0100": local time with its UTC offset, for created:.
+  function createdNow(d = new Date()) {
+    const p = (n) => String(Math.abs(n)).padStart(2, "0");
+    const off = -d.getTimezoneOffset();
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}` +
+      `${off >= 0 ? "+" : "-"}${p(Math.floor(Math.abs(off) / 60))}${p(Math.abs(off) % 60)}`;
   }
 
   // ---- queries -------------------------------------------------------------
@@ -332,7 +385,7 @@
   }
 
   return {
-    parse, serialize, serializeEntry, emptyModel, newFolder, parseTags, cleanTag, cleanFolderName, splitPath,
+    parse, serialize, serializeEntry, emptyModel, yamlString, createdNow, newFolder, parseTags, cleanTag, cleanFolderName, splitPath,
     findFolder, allEntries, allFolders, locate, countEntries, tagCounts,
     addEntry, updateEntry, deleteEntry, addFolder, renameFolder, moveFolder, deleteFolder,
     validate, validUrl, MAX_DEPTH,

@@ -20,10 +20,122 @@ edit the file yourself (in an editor, or with `git pull`), open pages reload. If
 since the page loaded, the save is refused and the page reloads the latest version, so nothing is
 overwritten silently.
 
+## Keeping your bookmarks in your own repository
+
+The tool can serve, edit and build a bookmarks file in any folder. You don't need to fork or copy
+this repo. For example, you can keep your bookmarks in a private repo and use this one only as
+the tool. Pick one of these three setups.
+
+### Option 1: add the tool to your bookmarks repo (recommended)
+
+In your bookmarks repository:
+
+```sh
+npm init -y
+npm install --save-dev github:damian-krawczyk/bookmarks
+```
+
+Add these scripts to its `package.json`:
+
+```json
+"scripts": {
+  "serve": "bookmarks serve bookmarks.md --open",
+  "build": "bookmarks build bookmarks.md -o dist/index.html",
+  "validate": "bookmarks validate bookmarks.md"
+}
+```
+
+Add a `.gitignore` containing:
+
+```
+node_modules/
+dist/
+```
+
+`npm run serve` then edits that repo's own `bookmarks.md`. If the file doesn't exist yet, it is
+created. The repo holds only `bookmarks.md`, `package.json`, `package-lock.json` and
+`.gitignore`. The lock file pins the tool to one commit, so it changes only when you run
+`npm update bookmarks`.
+
+If the tool's repository is private, npm needs access to it through your GitHub SSH key or
+credentials.
+
+### Option 2: install the command globally
+
+```sh
+npm install -g https://codeload.github.com/damian-krawczyk/bookmarks/tar.gz/main
+cd path/to/your-bookmarks-repo
+bookmarks serve --open          # uses ./bookmarks.md, created if missing
+```
+
+Run the same install command again to update. Alternatively, run `npm link` in a clone of this
+repo. Use the tarball URL above rather than `github:damian-krawczyk/bookmarks`: with `-g`, npm
+can link the command to a temporary clone that it then deletes, and you get
+`command not found: bookmarks`. If zsh still reports that after installing, run `rehash` or open
+a new terminal.
+
+This is the most convenient setup, but your bookmarks repo doesn't record which version of the
+tool it uses.
+
+### Option 3: run it from a clone of this repo
+
+```sh
+node path/to/bookmarks/bin/bookmarks.js serve path/to/your-bookmarks-repo/bookmarks.md --open
+```
+
+This needs no setup, but it only works on machines where this repo is cloned at that path.
+
+### VS Code task
+
+To start the server with **Cmd+Shift+B** (Ctrl+Shift+B on Windows and Linux), add
+`.vscode/tasks.json` to your bookmarks repo:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Serve bookmarks.md on the LOCALHOST",
+      "type": "shell",
+      "command": "npx bookmarks serve bookmarks.md --open",
+      "group": { "kind": "build", "isDefault": true },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "bookmarks",
+        "pattern": { "regexp": "^(no such file): (.*)$", "kind": "file", "file": 2, "message": 1 },
+        "background": { "activeBegins": true, "beginsPattern": "^(serving |created )", "endsPattern": "^serving .* at http://" }
+      }
+    }
+  ]
+}
+```
+
+### Publishing your bookmarks repo to GitHub Pages
+
+Copy [`.github/workflows/pages.yml`](.github/workflows/pages.yml) into your repo. Replace its
+`npm test` and `node bin/bookmarks.js …` steps with:
+
+```yaml
+      - run: npx bookmarks validate bookmarks.md
+      - run: npx bookmarks build bookmarks.md -o dist/index.html
+```
+
+Then turn on Pages in the repo's **Settings → Pages → Source → GitHub Actions**.
+
+- On GitHub Free, Pages works only from a public repository.
+- On paid plans, a site published from a private repository is still public, unless you're on
+  GitHub Enterprise, which can restrict it.
+- To keep your bookmarks private, skip Pages:
+  - Run `npm run serve` to edit them, then push the Markdown file as a backup with its full history.
+  - `npm run build` produces a single `index.html` that works offline.
+
 ## The file format
 
 ```md
-<!-- title: My bookmarks -->
+---
+title: My bookmarks
+created: 2026-11-07T14:08:10+0100
+---
 
 - [A link with no folder](https://example.com)
 
@@ -37,6 +149,10 @@ overwritten silently.
   indented like this.
 ```
 
+- The YAML front matter between the `---` lines is optional. `title:` sets the page title. Any
+  other fields (`created`, `tags`, `week`…) are kept exactly as you wrote them. New files start
+  with `title` and `created`. Files using the old `<!-- title: … -->` comment are still read, and
+  are switched to front matter the next time they're saved.
 - Headings are folders: `#` is a top-level folder, `##` a subfolder, and so on, up to 6 levels
   (Markdown's limit).
 - `- [name](url) — description` is a bookmark. The `tags:` line and any further indented lines

@@ -87,3 +87,32 @@ test("validate reports bad and duplicate URLs", () => {
   assert.equal(errors.length, 1);
   assert.match(warnings[0], /duplicate URL/);
 });
+
+test("front matter: title is read, other fields are kept as written", () => {
+  const src = "---\ncreated: 2026-11-07T14:08:10+0100\ntags:\n  - daily_note\nweek: 45 \nday: Saturday\ntitle: 'It''s mine'\n---\n\n# A\n\n- [x](https://x.io)\n";
+  const { model, warnings } = M.parse(src);
+  assert.deepEqual(warnings, []);
+  assert.equal(model.title, "It's mine");
+  assert.equal(M.serialize(model), src);
+  assert.equal(M.allEntries(model).length, 1);
+  model.title = "Work: links";
+  const out = M.serialize(model);
+  assert.match(out, /\nday: Saturday\ntitle: "Work: links"\n---\n/);
+  assert.equal(M.parse(out).model.title, "Work: links");
+});
+
+test("front matter: the old <!-- title --> comment is read and written as front matter", () => {
+  const { model } = M.parse("<!-- title: Old style -->\n\n- [x](https://x.io)\n");
+  assert.equal(model.title, "Old style");
+  assert.equal(M.serialize(model), "---\ntitle: Old style\n---\n\n- [x](https://x.io)\n");
+});
+
+test("front matter: a lone --- without a closing line is not front matter", () => {
+  const { model } = M.parse("---\n- [x](https://x.io)\n");
+  assert.equal(model.meta.length, 0);
+  assert.equal(M.allEntries(model).length, 1);
+});
+
+test("createdNow formats local time with its offset", () => {
+  assert.match(M.createdNow(new Date(2026, 10, 7, 14, 8, 10)), /^2026-11-07T14:08:10[+-]\d{4}$/);
+});
