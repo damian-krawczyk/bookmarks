@@ -293,7 +293,7 @@ function main(argv) {
   const file = rest[0] || "bookmarks.md";
   const needFile = ["serve", "build", "validate", "export"].includes(cmd);
   if (needFile && !fs.existsSync(file)) {
-    if (cmd === "serve" && !rest[0]) {
+    if (cmd === "serve") {
       fs.writeFileSync(file, Model.serialize(Model.emptyModel("Bookmarks")));
       console.log(`created ${file}`);
     } else {
