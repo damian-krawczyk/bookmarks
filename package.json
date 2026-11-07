@@ -1,0 +1,29 @@
+{
+  "name": "bookmarks",
+  "version": "0.1.0",
+  "description": "Bookmarks kept in a human-readable Markdown file, served and edited in the browser, deployable to GitHub Pages",
+  "license": "MIT",
+  "author": "Damian Krawczyk",
+  "repository": "github:damian-krawczyk/bookmarks",
+  "bin": {
+    "bookmarks": "bin/bookmarks.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md"
+  ],
+  "scripts": {
+    "serve": "node bin/bookmarks.js serve bookmarks.md --open",
+    "dev": "node bin/bookmarks.js serve examples/bookmarks.md --open",
+    "build": "node bin/bookmarks.js build bookmarks.md -o dist/index.html",
+    "validate": "node bin/bookmarks.js validate bookmarks.md",
+    "test": "node --test test/"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "d3": "7.9.0"
+  }
+}

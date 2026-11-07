@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{TITLE}}</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M8 3h16a2 2 0 0 1 2 2v24l-10-6-10 6V5a2 2 0 0 1 2-2z' fill='%232f6fdb'/%3E%3C/svg%3E">
+<script>try { var t = localStorage.getItem("bm-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<style>/*{{CSS}}*/</style>
+</head>
+<body>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn mobile-only" type="button" data-i18n-title="action.menu" data-i18n-aria-label="action.menu">☰</button>
+  <h1 id="title"></h1>
+  <div class="search">
+    <input id="search" type="search" autocomplete="off" spellcheck="false" data-i18n-placeholder="search.placeholder">
+  </div>
+  <div class="seg" role="group">
+    <button id="view-list" type="button" data-i18n="view.list"></button>
+    <button id="view-graph" type="button" data-i18n="view.graph"></button>
+  </div>
+  <button id="add-btn" class="primary edit-only" type="button"><span aria-hidden="true">+</span> <span class="label" data-i18n="action.add"></span></button>
+  <select id="lang" data-i18n-title="language" data-i18n-aria-label="language"></select>
+  <button id="theme-btn" class="icon-btn" type="button"></button>
+</header>
+
+<div class="layout">
+  <aside id="sidebar">
+    <nav id="tree" aria-label="folders"></nav>
+    <button id="new-folder" class="ghost edit-only" type="button">+ <span data-i18n="action.newFolder"></span></button>
+    <h2 data-i18n="tree.tags"></h2>
+    <div id="tags"></div>
+    <div class="side-foot">
+      <div class="edit-only bookmarklet-box">
+        <a id="bookmarklet" class="bookmarklet" href="#" data-i18n="bookmarklet"></a>
+        <p data-i18n="bookmarklet.hint"></p>
+      </div>
+      <p class="read-only-note" data-i18n="status.readOnly"></p>
+      <p class="keys" data-i18n="help.keys"></p>
+    </div>
+  </aside>
+  <div id="scrim" class="mobile-only"></div>
+
+  <main>
+    <div class="crumbs-row">
+      <div id="crumbs"></div>
+      <span id="count"></span>
+    </div>
+    <div id="list"></div>
+    <div id="graph" hidden></div>
+  </main>
+</div>
+
+<dialog id="editor">
+  <form id="editor-form" method="dialog" novalidate>
+    <h2 id="editor-title"></h2>
+    <label><span data-i18n="field.url"></span>
+      <div class="row">
+        <input name="url" type="url" required placeholder="https://" autocomplete="off">
+        <button id="fetch-title" class="ghost" type="button" data-i18n-title="field.fetchTitle" data-i18n-aria-label="field.fetchTitle">↻</button>
+      </div>
+      <small id="url-note" class="note"></small>
+    </label>
+    <label><span data-i18n="field.name"></span><input name="name" autocomplete="off"></label>
+    <label><span data-i18n="field.description"></span><textarea name="description" rows="3"></textarea></label>
+    <label><span data-i18n="field.tags"></span><input name="tags" autocomplete="off">
+      <small class="hint" data-i18n="field.tagsHint"></small>
+      <div id="tag-suggest" class="tag-suggest"></div>
+    </label>
+    <label><span data-i18n="field.folder"></span><input name="folder" list="folder-list" autocomplete="off">
+      <small class="hint" data-i18n="field.folderHint"></small>
+    </label>
+    <datalist id="folder-list"></datalist>
+    <p id="editor-error" class="error" role="alert"></p>
+    <div class="actions">
+      <button id="editor-delete" class="danger" type="button" data-i18n="action.delete"></button>
+      <span class="spacer"></span>
+      <button id="editor-cancel" class="ghost" type="button" data-i18n="action.cancel"></button>
+      <button class="primary" type="submit" data-i18n="action.save"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="ask">
+  <form id="ask-form" method="dialog">
+    <p id="ask-message"></p>
+    <input id="ask-input" name="value" autocomplete="off">
+    <div class="actions">
+      <span class="spacer"></span>
+      <button id="ask-cancel" class="ghost" type="button" data-i18n="action.cancel"></button>
+      <button id="ask-ok" class="primary" type="submit"></button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>/*{{DATA}}*/</script>
+<script>/*{{SCRIPTS}}*/</script>
+</body>
+</html>

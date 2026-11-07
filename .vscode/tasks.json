@@ -1,0 +1,64 @@
+{
+  // Cmd+Shift+B: serve bookmarks.md on localhost (default build task).
+  // Everything else: Terminal › Run Task…. Serve tasks keep running until you
+  // press Ctrl+C in their terminal or use Terminal › Terminate Task.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Serve bookmarks.md on the LOCALHOST",
+      "detail": "Edit bookmarks.md in the browser at http://127.0.0.1:4180/",
+      "type": "shell",
+      "command": "node",
+      "args": ["bin/bookmarks.js", "serve", "bookmarks.md", "--open"],
+      "group": { "kind": "build", "isDefault": true },
+      "isBackground": true,
+      "problemMatcher": {
+        // Background task: "ready" once the server prints its URL.
+        "owner": "bookmarks",
+        "pattern": { "regexp": "^(no such file): (.*)$", "kind": "file", "file": 2, "message": 1 },
+        "background": { "activeBegins": true, "beginsPattern": "^(serving |created )", "endsPattern": "^serving .* at http://" }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Serve current Markdown file on the LOCALHOST",
+      "detail": "Like Serve bookmarks.md, for the .md file open in the editor (port 4181)",
+      "type": "shell",
+      "command": "node",
+      "args": ["bin/bookmarks.js", "serve", "${file}", "--port", "4181", "--open"],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "bookmarks",
+        "pattern": { "regexp": "^(no such file): (.*)$", "kind": "file", "file": 2, "message": 1 },
+        "background": { "activeBegins": true, "beginsPattern": "^serving ", "endsPattern": "^serving .* at http://" }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+    },
+    {
+      "label": "Build static page (dist/index.html)",
+      "detail": "The read-only page GitHub Pages serves",
+      "type": "shell",
+      "command": "node",
+      "args": ["bin/bookmarks.js", "build", "bookmarks.md", "-o", "dist/index.html"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "Validate bookmarks.md",
+      "type": "shell",
+      "command": "node",
+      "args": ["bin/bookmarks.js", "validate", "bookmarks.md"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "Run tests",
+      "type": "shell",
+      "command": "npm",
+      "args": ["test"],
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    }
+  ]
+}
