@@ -51,6 +51,9 @@ First version.
 - **Using the tool with your own bookmarks repository** (README): three ways to install it (as
   a dev dependency, globally, or from a clone), a VS Code task, and how to publish your repo to
   GitHub Pages, including what that means for a private repository.
+- **Prompt for converting any file with an AI assistant** (README, *Converting other files with
+  an AI assistant*): turns lists of links, notes, CSV, Obsidian, Notion, Pocket or Raindrop
+  exports into `bookmarks.md`. Check the result with `bookmarks validate`.
 
 ### Changed
 

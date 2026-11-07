@@ -160,6 +160,83 @@ created: 2026-11-07T14:08:10+0100
 - The page writes the file back in this canonical form and keeps the order of entries, so diffs
   stay small. Lines that aren't bookmarks are kept as notes, and `validate` warns about them.
 
+### Converting other files with an AI assistant
+
+Browser exports are handled by [`bookmarks import`](#importing-and-exporting-browser-bookmarks).
+For anything else (a list of links, notes, a spreadsheet or CSV, an Obsidian or Notion export,
+Pocket or Raindrop exports, a chat log full of URLs), paste the prompt below into an AI assistant
+such as Claude, followed by your file. Save the answer as `bookmarks.md`, then check it:
+
+```sh
+bookmarks validate bookmarks.md     # or: node bin/bookmarks.js validate bookmarks.md
+```
+
+To add the result to an existing file, convert it to a separate file first, then copy the
+folders you want across. The app merges folders with the same name when it next saves.
+
+````text
+Convert the input below into a bookmarks file in exactly this Markdown format. Output only the
+file, with no explanation and no code fence around it.
+
+FORMAT
+
+---
+title: <a short title for the collection>
+created: <current date and time, like 2026-11-07T14:08:10+0100>
+---
+
+- [Name](https://url) — Optional one-line description
+  tags: #tag1 #tag2
+
+# Top-level folder
+
+- [Name](https://url) — Description
+  tags: #tag
+
+## Subfolder
+
+### Sub-subfolder
+
+- [Name](https://url)
+
+RULES
+
+1. Front matter: keep the --- lines. If the input has its own front matter or metadata (created
+   date, tags, author…), copy those fields into the front matter unchanged and add title: if
+   it's missing.
+2. Folders are headings: # is a top-level folder, ## a subfolder, ### a sub-subfolder, at most 6
+   levels (######). Never skip a level (no ### directly under #). Folder names must not contain
+   "/". Put a blank line after each heading.
+3. Keep the input's own structure (folders, categories, sections, columns, groupings) as
+   folders. If there is none, group the links into a few sensible folders by topic. Don't
+   invent more than about 10 top-level folders. Links that fit nowhere go at the top, before the
+   first heading.
+4. One bookmark per line: "- [Name](URL)". Then, only if there is a description, a space, an em
+   dash "—", a space and the description on the same line.
+   - Name: the link's title from the input; otherwise a short human title based on the page or
+     domain (for example "MDN – Array.prototype.map", not the raw URL). Escape [ and ] in names
+     as \[ and \].
+   - URL: complete and absolute, with https:// or http://. Keep query strings and fragments.
+     Replace spaces in URLs with %20. Don't shorten, guess or "fix" URLs. Skip javascript:
+     bookmarklets and entries without a usable URL.
+   - Description: from the input (note, excerpt, comment, column). Keep it to one sentence. If
+     the input has a longer note, put the extra lines on the following lines, indented by two
+     spaces, after the tags line. Don't make up descriptions.
+5. Tags: if the input has tags, labels or keywords, write them on the line right after the
+   bookmark, indented by two spaces: "  tags: #tag1 #tag2". Use lowercase, no spaces inside
+   a tag (use - instead), no commas. You may add one or two obvious topic tags when the input has
+   none, but stay consistent: reuse the same tag for the same topic.
+6. Remove exact duplicate URLs. Keep the first one and merge its tags and description.
+7. Keep the input's order within each folder. Don't add commentary, notes or text outside this
+   format. Every non-empty line must be front matter, a heading, a bookmark, its tags line, or
+   its indented description lines.
+8. Keep names and descriptions in their original language. Don't translate them.
+
+INPUT
+
+<paste your file here>
+````
+
 ## In the browser
 
 - **Tree**: click a folder to list it, including its subfolders. Hover a folder to add a subfolder,
