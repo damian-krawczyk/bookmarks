@@ -60,5 +60,7 @@
   "graph.links": "Connected to",
   "bookmarklet": "+ Bookmark",
   "bookmarklet.hint": "Drag this button to your browser's bookmarks bar, then click it on any page to add that page here.",
-  "help.keys": "Keys: / search · n new bookmark · g list/graph · Esc close"
+  "help.keys": "Keys: / search · n new bookmark · g list/graph · Esc close",
+  "footer.built": "Built {date}",
+  "footer.commit": "commit"
 }

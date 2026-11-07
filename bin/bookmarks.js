@@ -7,7 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const http = require("http");
 const crypto = require("crypto");
-const { execFile } = require("child_process");
+const { execFile, execFileSync } = require("child_process");
 const Model = require("../src/model.js");
 const Netscape = require("../src/netscape.js");
 
@@ -84,6 +84,26 @@ function renderHtml({ markdown, config, title }) {
   return read(path.join(SRC, "template.html")).replace(/\{\{TITLE\}\}|\/\*\{\{(?:CSS|DATA|SCRIPTS)\}\}\*\//g, (m) => parts[m]);
 }
 
+// When the page was rendered and which commit of the bookmarks file's repo it shows.
+// Uses git in the file's folder; in GitHub Actions falls back to GITHUB_SHA.
+function buildInfo(file) {
+  const dir = path.dirname(path.resolve(file));
+  const git = (...args) => {
+    try { return execFileSync("git", ["-C", dir, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim(); } catch (_) { return ""; }
+  };
+  const sha = git("rev-parse", "HEAD") || process.env.GITHUB_SHA || "";
+  let repoUrl = process.env.GITHUB_REPOSITORY ? `${process.env.GITHUB_SERVER_URL || "https://github.com"}/${process.env.GITHUB_REPOSITORY}` : "";
+  if (!repoUrl) {
+    const m = /^(?:https:\/\/|git@)([^/:]+)[/:](.+?)(?:\.git)?$/.exec(git("remote", "get-url", "origin"));
+    if (m) repoUrl = `https://${m[1]}/${m[2]}`;
+  }
+  return {
+    time: new Date().toISOString(),
+    commit: sha.slice(0, 7),
+    commitUrl: sha && repoUrl ? `${repoUrl}/commit/${sha}` : "",
+  };
+}
+
 function titleOf(markdown) {
   return Model.parse(markdown).model.title || "Bookmarks";
 }
@@ -108,7 +128,7 @@ function build(file, out) {
   report(Model.validate(markdown));
   out = out || path.join("dist", "index.html");
   fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
-  fs.writeFileSync(out, renderHtml({ markdown, title: titleOf(markdown), config: { readOnly: true, fileName: path.basename(file) } }));
+  fs.writeFileSync(out, renderHtml({ markdown, title: titleOf(markdown), config: { readOnly: true, fileName: path.basename(file), build: buildInfo(file) } }));
   console.log(`wrote ${out}`);
   return 0;
 }
@@ -195,7 +215,7 @@ function serve(file, flags) {
         const markdown = current();
         return send(res, 200, "text/html; charset=utf-8", renderHtml({
           markdown, title: titleOf(markdown),
-          config: { readOnly: false, fileName: path.basename(abs), version: hash(markdown) },
+          config: { readOnly: false, fileName: path.basename(abs), version: hash(markdown), build: buildInfo(abs) },
         }));
       }
       if (url.pathname === "/api/bookmarks" && req.method === "GET") {

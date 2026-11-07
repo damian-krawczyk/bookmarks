@@ -62,5 +62,7 @@
   "graph.links": "Conectado con",
   "bookmarklet": "+ Marcador",
   "bookmarklet.hint": "Arrastra este botón a la barra de marcadores del navegador y haz clic en él en cualquier página para añadirla aquí.",
-  "help.keys": "Teclas: / buscar · n nuevo marcador · g lista/grafo · Esc cerrar"
+  "help.keys": "Teclas: / buscar · n nuevo marcador · g lista/grafo · Esc cerrar",
+  "footer.built": "Generado {date}",
+  "footer.commit": "commit"
 }

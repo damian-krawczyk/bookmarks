@@ -264,10 +264,30 @@
     btn.setAttribute("aria-label", t("theme." + state.theme));
   }
 
+  // "Built 7 Nov 2026, 15:24 · commit a901fb6" in the sidebar footer.
+  function renderBuildInfo() {
+    const b = config.build || {};
+    const parts = [];
+    const when = b.time ? new Date(b.time) : null;
+    if (when && !isNaN(when)) {
+      let text;
+      try { text = new Intl.DateTimeFormat(i18n.lang, { dateStyle: "medium", timeStyle: "short" }).format(when); } catch (_) { text = when.toLocaleString(); }
+      parts.push(esc(t("footer.built", { date: text })));
+    }
+    if (b.commit) {
+      const hashHtml = b.commitUrl && /^https:\/\//.test(b.commitUrl)
+        ? `<a href="${esc(b.commitUrl)}" target="_blank" rel="noopener noreferrer">${esc(b.commit)}</a>`
+        : `<code>${esc(b.commit)}</code>`;
+      parts.push(`${esc(t("footer.commit"))} ${hashHtml}`);
+    }
+    $("#build-info").innerHTML = parts.join(" · ");
+  }
+
   function applyLanguage() {
     document.documentElement.lang = i18n.lang;
     i18n.apply(document);
     applyTheme();
+    renderBuildInfo();
     if (graph) graph.labels();
     render();
   }

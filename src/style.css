@@ -199,6 +199,9 @@ main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-y:
 
 .side-foot { margin-top: auto; padding: 18px 8px 0; color: var(--muted); font-size: 12px; }
 .side-foot p { margin: 6px 0; }
+.build-info { font-variant-numeric: tabular-nums; }
+.build-info:empty { display: none; }
+.build-info a, .build-info code { color: inherit; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .bookmarklet {
   display: inline-block;
   padding: 4px 10px;

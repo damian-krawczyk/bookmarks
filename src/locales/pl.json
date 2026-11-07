@@ -64,5 +64,7 @@
   "graph.links": "Powiązane z",
   "bookmarklet": "+ Zakładka",
   "bookmarklet.hint": "Przeciągnij ten przycisk na pasek zakładek przeglądarki, a potem kliknij go na dowolnej stronie, aby ją tu dodać.",
-  "help.keys": "Klawisze: / szukaj · n nowa zakładka · g lista/graf · Esc zamknij"
+  "help.keys": "Klawisze: / szukaj · n nowa zakładka · g lista/graf · Esc zamknij",
+  "footer.built": "Zbudowano {date}",
+  "footer.commit": "commit"
 }
