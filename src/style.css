@@ -358,3 +358,8 @@ dialog .spacer { flex: 1; }
   .card .tools { display: flex; position: static; align-self: flex-end; }
   .g-panel { width: auto; left: 10px; top: auto; bottom: 10px; max-height: 45%; }
 }
+
+/* iOS zooms into any focused field whose text is under 16px; keep fields at 16px on touch screens. */
+@media (max-width: 760px), (pointer: coarse) {
+  input, select, textarea { font-size: 16px; }
+}
