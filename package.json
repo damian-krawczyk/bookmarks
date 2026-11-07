@@ -18,7 +18,7 @@
     "dev": "node bin/bookmarks.js serve examples/bookmarks.md --open",
     "build": "node bin/bookmarks.js build bookmarks.md -o dist/index.html",
     "validate": "node bin/bookmarks.js validate bookmarks.md",
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   },
   "engines": {
     "node": ">=18"
