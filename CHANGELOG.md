@@ -57,6 +57,15 @@ First version.
 
 ### Changed
 
+- **Graph: zooming in spreads the dots apart instead of blowing everything up**, as in Obsidian
+  and project3. Dots grow only a little (k^0.4), names even less (k^0.2), and lines stay thin, so a
+  crowded part becomes readable. Bookmark names appear once you zoom in a little.
+- **Graph: opening it animates.** The graph is laid out before it's shown and fitted to the
+  window. The dots then spread out from the middle into place, the inner ones first, over about a
+  second. Turned off when the system asks for reduced motion. A **⤢** button (*Fit to window*)
+  brings the whole graph back into view. Changing the search while the graph is open moves the
+  dots gently instead of re-animating.
+
 - **The file's title is now YAML front matter** (`---` / `title: My bookmarks` / `---`) instead of
   `<!-- title: … -->`. GitHub shows it as a table, and tools like Obsidian read it. Any other
   fields (`created`, `tags`, `week`…) are kept exactly as written. New files start with `title`

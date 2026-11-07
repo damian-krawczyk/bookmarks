@@ -207,6 +207,7 @@
   }
 
   let graph = null;
+  let graphEnter = true; // the next graph render is the view being opened: animate it in
   function renderGraph(shown) {
     if (!window.d3) return;
     if (!graph) {
@@ -218,7 +219,8 @@
         onEdit: (e) => openEditor(e),
       });
     }
-    graph.update(state.model.title || t("app.title"), shown);
+    graph.update(state.model.title || t("app.title"), shown, { enter: graphEnter });
+    graphEnter = false;
   }
 
   // ---- actions ----
@@ -247,6 +249,7 @@
   }
 
   function setView(v) {
+    if (v === "graph" && state.view !== "graph") graphEnter = true;
     state.view = v;
     store.set("view", v);
     if (v !== "graph" && graph) graph.stop();

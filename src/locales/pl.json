@@ -62,6 +62,7 @@
   "graph.tag": "Tag",
   "graph.hint": "Przewiń, aby powiększyć, przeciągnij, aby przesunąć. Kliknij kropkę, aby zobaczyć szczegóły, kliknij dwukrotnie, aby otworzyć.",
   "graph.links": "Powiązane z",
+  "graph.fit": "Dopasuj do okna",
   "bookmarklet": "+ Zakładka",
   "bookmarklet.hint": "Przeciągnij ten przycisk na pasek zakładek przeglądarki, a potem kliknij go na dowolnej stronie, aby ją tu dodać.",
   "help.keys": "Klawisze: / szukaj · n nowa zakładka · g lista/graf · Esc zamknij",

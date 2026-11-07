@@ -60,6 +60,7 @@
   "graph.tag": "Etiqueta",
   "graph.hint": "Desplaza para hacer zoom, arrastra para mover. Haz clic en un punto para ver detalles y doble clic para abrirlo.",
   "graph.links": "Conectado con",
+  "graph.fit": "Ajustar a la ventana",
   "bookmarklet": "+ Marcador",
   "bookmarklet.hint": "Arrastra este botón a la barra de marcadores del navegador y haz clic en él en cualquier página para añadirla aquí.",
   "help.keys": "Teclas: / buscar · n nuevo marcador · g lista/grafo · Esc cerrar",

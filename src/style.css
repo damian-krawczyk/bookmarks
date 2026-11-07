@@ -259,15 +259,16 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 #graph { flex: 1; position: relative; min-height: 420px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); overflow: hidden; }
 #graph svg { width: 100%; height: 100%; display: block; cursor: grab; }
 #graph svg:active { cursor: grabbing; }
-.g-link { stroke: var(--g-line); stroke-width: 1; }
-.g-link.hl { stroke: var(--accent); stroke-width: 1.8; }
+/* --gs / --tl: how much smaller than the zoom lines and names are drawn (see graph.js). */
+.g-link { stroke: var(--g-line); stroke-width: calc(1px * var(--gs, 1)); }
+.g-link.hl { stroke: var(--accent); stroke-width: calc(1.8px * var(--gs, 1)); }
 .g-node { cursor: pointer; }
 .g-node circle, .g-node rect, .g-node path { stroke: var(--panel); stroke-width: 1.5; }
 .g-node.folder .shape { fill: var(--g-folder); }
 .g-node.bookmark .shape { fill: var(--g-bookmark); }
 .g-node.tag .shape { fill: var(--g-tag); }
 .g-node.root .shape { fill: var(--g-root); }
-.g-node text { font-size: 11px; fill: var(--text); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.g-node text { font-size: calc(11px * var(--tl, 1)); fill: var(--text); paint-order: stroke; stroke: var(--panel); stroke-width: calc(3px * var(--tl, 1)); stroke-linejoin: round; pointer-events: none; }
 .g-node.bookmark text { display: none; }
 #graph.zoomed .g-node.bookmark text, .g-node.bookmark.hl text, .g-node.bookmark.sel text { display: block; }
 .g-node.dim { opacity: .15; }
@@ -279,7 +280,8 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 }
 .g-legend { top: 10px; display: flex; gap: 12px; }
 .g-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
-.g-hint { bottom: 10px; max-width: calc(100% - 20px); }
+.g-hint { bottom: 10px; max-width: calc(100% - 60px); }
+.g-fit { position: absolute; right: 10px; bottom: 10px; padding: 4px 9px; font-size: 15px; line-height: 1.2; }
 .g-panel {
   position: absolute; top: 10px; right: 10px; width: 280px; max-height: calc(100% - 20px); overflow-y: auto;
   background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);

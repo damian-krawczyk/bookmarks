@@ -58,6 +58,7 @@
   "graph.tag": "Tag",
   "graph.hint": "Scroll to zoom, drag to move. Click a dot for details, double-click to open.",
   "graph.links": "Connected to",
+  "graph.fit": "Fit to window",
   "bookmarklet": "+ Bookmark",
   "bookmarklet.hint": "Drag this button to your browser's bookmarks bar, then click it on any page to add that page here.",
   "help.keys": "Keys: / search · n new bookmark · g list/graph · Esc close",
